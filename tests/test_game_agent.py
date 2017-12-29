@@ -20,10 +20,21 @@ class IsolationTest(unittest.TestCase):
         self.player2 = "Player2"
         self.game = isolation.Board(self.player1, self.player2)
 
-    def test_example(self):
-        # TODO: All methods must start with "test_"
-        self.fail("Hello, World!")
+    def test_game_agent(self):
+        self.game.apply_move((2, 3))
+        self.game.apply_move((0, 5))
+        print(self.game.to_string())
+        assert(self.player1 == self.game.active_player)
+        print(self.game.get_legal_moves())
+
+        new_game = self.game.forecast_move((1, 1))
+        assert(new_game.to_string() != self.game.to_string())
+        print("\nOld state:\n{}".format(self.game.to_string()))
+        print("\nNew state:\n{}".format(new_game.to_string()))
 
 
 if __name__ == '__main__':
     unittest.main()
+
+
+

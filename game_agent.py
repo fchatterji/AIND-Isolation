@@ -213,8 +213,67 @@ class MinimaxPlayer(IsolationPlayer):
             raise SearchTimeout()
 
         # TODO: finish this function!
-        raise NotImplementedError
+        return max(game.get_legal_moves(),
+                   key=lambda m: self.min_value(game.forecast_move(m), depth)
+                )
 
+
+    def terminal_test(self, gameState):
+        """ Return True if the game is over for the active player
+        and False otherwise.
+        """
+        if self.time_left() < self.TIMER_THRESHOLD:
+            raise SearchTimeout()
+
+        return not bool(gameState.get_legal_moves())  # by Assumption 1
+
+
+    def min_value(self, gameState, depth):
+        """ Return the value for a win (+1) if the game is over,
+        otherwise return the minimum value over all legal child
+        nodes.
+        """
+        if self.time_left() < self.TIMER_THRESHOLD:
+            raise SearchTimeout()
+
+        if self.terminal_test(gameState):
+            return 1  # by Assumption 2
+
+        if depth == 0:
+            return self.score(gameState, gameState.active_player)
+
+        v = float("inf")
+        depth -= 1
+        for m in gameState.get_legal_moves():
+            v = min(
+                v,
+                self.max_value(gameState.forecast_move(m), depth)
+            )
+        return v
+
+
+    def max_value(self, gameState, depth):
+        """ Return the value for a loss (-1) if the game is over,
+        otherwise return the maximum value over all legal child
+        nodes.
+        """
+        if self.time_left() < self.TIMER_THRESHOLD:
+            raise SearchTimeout()
+
+        if self.terminal_test(gameState):
+            return -1  # by assumption 2
+
+        if depth == 0:
+            return self.score(gameState, gameState.inactive_player)
+
+        v = float("-inf")
+        depth -= 1
+        for m in gameState.get_legal_moves():
+            v = max(
+                v,
+                self.min_value(gameState.forecast_move(m), depth)
+            )
+        return v
 
 class AlphaBetaPlayer(IsolationPlayer):
     """Game-playing agent that chooses a move using iterative deepening minimax
