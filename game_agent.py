@@ -34,8 +34,7 @@ def custom_score(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    # TODO: finish this function!
-    raise NotImplementedError
+    return float(len(game.get_legal_moves(player)))
 
 
 def custom_score_2(game, player):
@@ -212,11 +211,12 @@ class MinimaxPlayer(IsolationPlayer):
         if self.time_left() < self.TIMER_THRESHOLD:
             raise SearchTimeout()
 
-        # TODO: finish this function!
+        if self.terminal_test(game):
+            return 1  # by Assumption 2
+
         return max(game.get_legal_moves(),
                    key=lambda m: self.min_value(game.forecast_move(m), depth)
                 )
-
 
     def terminal_test(self, gameState):
         """ Return True if the game is over for the active player
@@ -239,15 +239,15 @@ class MinimaxPlayer(IsolationPlayer):
         if self.terminal_test(gameState):
             return 1  # by Assumption 2
 
-        if depth == 0:
-            return self.score(gameState, gameState.active_player)
+        if depth == 1:
+            return self.score(gameState, self)
 
         v = float("inf")
-        depth -= 1
+
         for m in gameState.get_legal_moves():
             v = min(
                 v,
-                self.max_value(gameState.forecast_move(m), depth)
+                self.max_value(gameState.forecast_move(m), depth - 1)
             )
         return v
 
@@ -263,15 +263,15 @@ class MinimaxPlayer(IsolationPlayer):
         if self.terminal_test(gameState):
             return -1  # by assumption 2
 
-        if depth == 0:
-            return self.score(gameState, gameState.inactive_player)
+        if depth == 1:
+            return self.score(gameState, self)
 
         v = float("-inf")
-        depth -= 1
+
         for m in gameState.get_legal_moves():
             v = max(
                 v,
-                self.min_value(gameState.forecast_move(m), depth)
+                self.min_value(gameState.forecast_move(m), depth - 1)
             )
         return v
 
