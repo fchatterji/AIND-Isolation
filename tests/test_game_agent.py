@@ -16,8 +16,8 @@ class IsolationTest(unittest.TestCase):
 
     def setUp(self):
         reload(game_agent)
-        self.player1 = "Player1"
-        self.player2 = "Player2"
+        self.player1 = game_agent.MinimaxPlayer()
+        self.player2 = game_agent.MinimaxPlayer()
         self.game = isolation.Board(self.player1, self.player2)
 
     def test_game_agent(self):
@@ -31,6 +31,8 @@ class IsolationTest(unittest.TestCase):
         assert(new_game.to_string() != self.game.to_string())
         print("\nOld state:\n{}".format(self.game.to_string()))
         print("\nNew state:\n{}".format(new_game.to_string()))
+
+        self.game.play()
 
 
 if __name__ == '__main__':
